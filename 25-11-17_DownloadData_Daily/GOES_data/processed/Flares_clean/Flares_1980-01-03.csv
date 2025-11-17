@@ -1,0 +1,2 @@
+StartTime,PeakTime,EndTime,Class,PeakFlux,Observatory,Instrument,NumSpots,NOAA_AR,NOAA_Class,Zurich,McIntosh,MtWilson,HPC_X,HPC_Y,HGS_Long,HGS_Lat,EventType,EventType2
+1980-01-03 00:50:00,1980-01-03 00:54:00,1980-01-03 01:11:00,C9.0,,GOES,GOES,,2220,,,,,-647.52,275.1924,-43,14,FL,9
