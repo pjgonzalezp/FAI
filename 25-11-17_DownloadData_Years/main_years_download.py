@@ -69,10 +69,24 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
         year_dir = os.path.join(base_output_dir, str(year))
         os.makedirs(year_dir, exist_ok=True)
 
+        # ======================================================
+        # 🚫 1) SALTAR AÑO COMPLETO SI YA EXISTE df_full_YYYY.csv
+        # ======================================================
+        annual_full_file = os.path.join(year_dir, f"df_full_{year}.csv")
+
+        if os.path.exists(annual_full_file):
+            print(f"⏭️ Año {year} ya procesado anteriormente. Se omite completamente.")
+            continue
+
         # --- Logs anuales ---
         logs_dir = os.path.join(year_dir, "logs")
         os.makedirs(logs_dir, exist_ok=True)
         year_log = os.path.join(logs_dir, f"errores_{year}.log")
+
+        # --- Listas anuales ---
+        list_year_full  = []
+        list_year_flare = []
+        list_year_AR    = []
 
         # --- Generar días del año ---
         df_days = all_dates_dataframe(f"{year}-01-01", f"{year}-12-31")
@@ -87,6 +101,15 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
             month_dir = os.path.join(year_dir, month)
             os.makedirs(month_dir, exist_ok=True)
 
+            # ==========================================================
+            # 🚫 2) SALTAR MES COMPLETO SI YA EXISTE df_full_YYYY_MM.csv
+            # ==========================================================
+            monthly_full_file = os.path.join(month_dir, f"df_full_{year}_{month}.csv")
+
+            if os.path.exists(monthly_full_file):
+                print(f"   ⏭️ Mes {year}-{month} ya estaba procesado. Se omite.")
+                continue
+            
             nc_dir = os.path.join(month_dir, "nc_files")
             os.makedirs(nc_dir, exist_ok=True)
             plot_dir = os.path.join(month_dir, "plots")
@@ -103,29 +126,63 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
                 end_time   = row["end_time"].strftime("%Y-%m-%d %H:%M:%S")
 
                 print(f"\nProcesando {start_time[:10]}...")
-                result = download_goes_flare_AR_data(start_time, end_time, resolution="avg1m", Dif_time=5, plot_diff=True,
-                                                    nc_dir=nc_dir, plot_dir=plot_dir,
-                                                    month_log=month_log, year_log=year_log)
+                result = download_goes_flare_AR_data(
+                    start_time, end_time, resolution="avg1m", Dif_time=5, plot_diff=True,
+                    nc_dir=nc_dir, plot_dir=plot_dir,
+                    month_log=month_log, year_log=year_log
+                )
+
                 if result is None:
                     dias_sin_datos.append(start_time[:10])
                     continue
 
+                # --- Acumulación mensual ---
                 if not result["df_full"].empty:
                     list_df_full.append(result["df_full"])
+                    list_year_full.append(result["df_full"])
+
                 if not result["df_flare_data"].empty:
                     list_df_flare.append(result["df_flare_data"])
+                    list_year_flare.append(result["df_flare_data"])
                     total_flares += len(result["df_flare_data"])
+
                 if not result["df_AR_data"].empty:
                     list_df_AR.append(result["df_AR_data"])
+                    list_year_AR.append(result["df_AR_data"])
                     total_AR += len(result["df_AR_data"])
 
             # --- Guardar CSV mensual ---
             if list_df_full:
-                pd.concat(list_df_full).to_csv(os.path.join(month_dir, f"df_full_{year}_{month}.csv"), index=True)
+                pd.concat(list_df_full).to_csv(
+                    os.path.join(month_dir, f"df_full_{year}_{month}.csv"), 
+                    index=True
+                )
+
             if list_df_flare:
-                pd.concat(list_df_flare).to_csv(os.path.join(month_dir, f"df_flare_data_{year}_{month}.csv"), index=False)
+                pd.concat(list_df_flare).to_csv(
+                    os.path.join(month_dir, f"df_flare_data_{year}_{month}.csv"), 
+                    index=False
+                )
+
             if list_df_AR:
-                pd.concat(list_df_AR).to_csv(os.path.join(month_dir, f"df_AR_{year}_{month}.csv"), index=False)
+                pd.concat(list_df_AR).to_csv(
+                    os.path.join(month_dir, f"df_AR_{year}_{month}.csv"), 
+                    index=False
+                )
+
+        # ================================
+        # 🟩 GUARDADO ANUAL COMPLETO
+        # ================================
+        if list_year_full:
+            pd.concat(list_year_full).to_csv(os.path.join(year_dir, f"df_full_{year}.csv"), index=True)
+
+        if list_year_flare:
+            pd.concat(list_year_flare).to_csv(os.path.join(year_dir, f"df_flare_data_{year}.csv"), index=False)
+
+        if list_year_AR:
+            pd.concat(list_year_AR).to_csv(os.path.join(year_dir, f"df_AR_{year}.csv"), index=False)
+
+        print(f"\n✔️ Archivos anuales guardados en {year_dir}")
 
         # --- Resumen anual ---
         resumen_file = os.path.join(year_dir, f"resumen_{year}.txt")
@@ -142,7 +199,9 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
 
         print(f"\n✅ Resumen anual guardado: {resumen_file}")
 
-    print("\n✅ Descarga completa de todos los años con logs mensuales, anuales y resumen.")
+    print("\n🚀 Descarga completa con archivos anuales y mensuales.")
+
+
 
 # --- Ejecución directa ---
 if __name__ == "__main__":
@@ -152,4 +211,5 @@ if __name__ == "__main__":
     end_year = 2025
 
     process_goes_by_year(start_year, end_year, base_output_dir=base_output_dir)
+
 
