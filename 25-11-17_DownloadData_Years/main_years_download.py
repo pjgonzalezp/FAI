@@ -15,7 +15,6 @@ from functions_download import (
 # --------------------------------------------------------
 # Crear DataFrame con todos los días del intervalo
 # --------------------------------------------------------
-
 def all_dates_dataframe(start_date, end_date):
     dates = pd.date_range(start=start_date, end=end_date, freq='D')
     df_days = pd.DataFrame({
@@ -24,11 +23,9 @@ def all_dates_dataframe(start_date, end_date):
     })
     return df_days
 
-
 # --------------------------------------------------------
 # Pipeline diario GOES + Flares + AR con manejo de logs
 # --------------------------------------------------------
-
 def download_goes_flare_AR_data(start_time, end_time, resolution="avg1m",
                                 Dif_time=5, plot_diff=True,
                                 nc_dir=None, plot_dir=None,
@@ -102,11 +99,9 @@ def download_goes_flare_AR_data(start_time, end_time, resolution="avg1m",
         if year_log:  open(year_log, "a").write(msg + "\n")
         return None
 
-
 # --------------------------------------------------------
 # Verificación si un archivo anual está completo (Opción C)
 # --------------------------------------------------------
-
 def check_annual_completeness(year_dir, year):
     """
     Verifica si el archivo anual contiene todos los meses disponibles.
@@ -137,11 +132,9 @@ def check_annual_completeness(year_dir, year):
 
     return True
 
-
 # --------------------------------------------------------
 # Reconstrucción anual desde archivos mensuales
 # --------------------------------------------------------
-
 def rebuild_annual_files(year_dir, year):
     print(f"\n🔄 Reconstruyendo archivos anuales para {year}...")
 
@@ -190,11 +183,9 @@ def rebuild_annual_files(year_dir, year):
         )
         print(f"   ✔ df_AR_{year}.csv generado.")
 
-
 # --------------------------------------------------------
 # Procesamiento general año por año
 # --------------------------------------------------------
-
 def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
 
     for year in range(start_year, end_year + 1):
@@ -207,147 +198,162 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
 
         annual_full_file = os.path.join(year_dir, f"df_full_{year}.csv")
 
-        # --- Opción C: reconstruir solo si está incompleto
+        # --- Opción C: reconstruir solo si está incompleto ---
         if os.path.exists(annual_full_file) and check_annual_completeness(year_dir, year):
-            print(f"⏭️ Archivo anual {year} completo. Se omite completamente.")
-            continue
+            print(f"⏭️ Archivo anual {year} completo. No se procesarán meses, pero se actualizará/creará el resumen.")
+            need_process_months = False
+        else:
+            print("⚠️ Archivo anual está incompleto o no existe → se procesarán meses faltantes.")
+            need_process_months = True
 
-        print("⚠️ Archivo anual está incompleto o no existe → se procesarán meses faltantes.")
+        # =====================================================================
+        # PROCESAR DÍAS Y MESES SOLO SI FALTAN DATOS
+        # =====================================================================
+        if need_process_months:
 
-        # --- Logs del año ---
-        logs_dir = os.path.join(year_dir, "logs")
-        os.makedirs(logs_dir, exist_ok=True)
-        year_log = os.path.join(logs_dir, f"errores_{year}.log")
+            # --- Logs del año ---
+            logs_dir = os.path.join(year_dir, "logs")
+            os.makedirs(logs_dir, exist_ok=True)
+            year_log = os.path.join(logs_dir, f"errores_{year}.log")
 
-        # --- Generar días del año ---
-        df_days = all_dates_dataframe(f"{year}-01-01", f"{year}-12-31")
-        df_days["month"] = df_days["start_time"].dt.strftime("%m")
+            # --- Generar días del año ---
+            df_days = all_dates_dataframe(f"{year}-01-01", f"{year}-12-31")
+            df_days["month"] = df_days["start_time"].dt.strftime("%m")
 
-        dias_sin_datos = []
-        total_flares = 0
-        total_AR = 0
+            dias_sin_datos = []
+            total_flares = 0
+            total_AR = 0
 
-        # Procesamiento mensual
-        for month, df_month in df_days.groupby("month"):
+            # -----------------------------------------------------------------
+            # PROCESAMIENTO MENSUAL
+            # -----------------------------------------------------------------
+            for month, df_month in df_days.groupby("month"):
 
-            month_dir = os.path.join(year_dir, month)
-            os.makedirs(month_dir, exist_ok=True)
+                month_dir = os.path.join(year_dir, month)
+                os.makedirs(month_dir, exist_ok=True)
 
-            monthly_full_file = os.path.join(month_dir, f"df_full_{year}_{month}.csv")
+                monthly_full_file = os.path.join(month_dir, f"df_full_{year}_{month}.csv")
 
-            if os.path.exists(monthly_full_file):
-                print(f"   ⏭️ Mes {year}-{month} ya procesado.")
-                continue
-
-            print(f"\n📅 Procesando mes {year}-{month}...")
-            nc_dir = os.path.join(month_dir, "nc_files")
-            plot_dir = os.path.join(month_dir, "plots")
-            os.makedirs(nc_dir, exist_ok=True)
-            os.makedirs(plot_dir, exist_ok=True)
-
-            month_log = os.path.join(month_dir, f"errores_{year}_{month}.log")
-
-            list_df_full = []
-            list_df_flare = []
-            list_df_AR = []
-
-            # --- Procesamiento diario ---
-            for _, row in df_month.iterrows():
-
-                start_time = row["start_time"].strftime("%Y-%m-%d %H:%M:%S")
-                end_time   = row["end_time"].strftime("%Y-%m-%d %H:%M:%S")
-
-                print(f"   Día {start_time[:10]}...")
-
-                result = download_goes_flare_AR_data(
-                    start_time, end_time,
-                    resolution="avg1m",
-                    Dif_time=5,
-                    plot_diff=True,
-                    nc_dir=nc_dir,
-                    plot_dir=plot_dir,
-                    month_log=month_log,
-                    year_log=year_log
-                )
-
-                if result is None:
-                    dias_sin_datos.append(start_time[:10])
+                # Si ya existe, no reprocesar ese mes
+                if os.path.exists(monthly_full_file):
+                    print(f"   ⏭️ Mes {year}-{month} ya procesado.")
                     continue
 
-                if not result["df_full"].empty:
-                    list_df_full.append(result["df_full"])
+                print(f"\n📅 Procesando mes {year}-{month}...")
+                nc_dir = os.path.join(month_dir, "nc_files")
+                plot_dir = os.path.join(month_dir, "plots")
+                os.makedirs(nc_dir, exist_ok=True)
+                os.makedirs(plot_dir, exist_ok=True)
 
-                if not result["df_flare_data"].empty:
-                    list_df_flare.append(result["df_flare_data"])
-                    total_flares += len(result["df_flare_data"])
+                month_log = os.path.join(month_dir, f"errores_{year}_{month}.log")
 
-                if not result["df_AR_data"].empty:
-                    list_df_AR.append(result["df_AR_data"])
-                    total_AR += len(result["df_AR_data"])
+                list_df_full = []
+                list_df_flare = []
+                list_df_AR = []
 
-            # --- Guardar mensuales ---
-            if list_df_full:
-                pd.concat(list_df_full).to_csv(monthly_full_file, index=True)
+                # -------------------------------------------------------------
+                # PROCESAMIENTO DIARIO
+                # -------------------------------------------------------------
+                for _, row in df_month.iterrows():
 
-            if list_df_flare:
-                pd.concat(list_df_flare).to_csv(
-                    os.path.join(month_dir, f"df_flare_data_{year}_{month}.csv"),
-                    index=False
-                )
+                    start_time = row["start_time"].strftime("%Y-%m-%d %H:%M:%S")
+                    end_time   = row["end_time"].strftime("%Y-%m-%d %H:%M:%S")
 
-            if list_df_AR:
-                pd.concat(list_df_AR).to_csv(
-                    os.path.join(month_dir, f"df_AR_{year}_{month}.csv"),
-                    index=False
-                )
+                    print(f"   Día {start_time[:10]}...")
 
-        # --- Reconstrucción anual (Opción C) ---
+                    result = download_goes_flare_AR_data(
+                        start_time, end_time,
+                        resolution="avg1m",
+                        Dif_time=5,
+                        plot_diff=True,
+                        nc_dir=nc_dir,
+                        plot_dir=plot_dir,
+                        month_log=month_log,
+                        year_log=year_log
+                    )
+
+                    if result is None:
+                        dias_sin_datos.append(start_time[:10])
+                        continue
+
+                    if not result["df_full"].empty:
+                        list_df_full.append(result["df_full"])
+
+                    if not result["df_flare_data"].empty:
+                        list_df_flare.append(result["df_flare_data"])
+                        total_flares += len(result["df_flare_data"])
+
+                    if not result["df_AR_data"].empty:
+                        list_df_AR.append(result["df_AR_data"])
+                        total_AR += len(result["df_AR_data"])
+
+                # --- Guardar mensuales ---
+                if list_df_full:
+                    pd.concat(list_df_full).to_csv(monthly_full_file, index=True)
+
+                if list_df_flare:
+                    pd.concat(list_df_flare).to_csv(
+                        os.path.join(month_dir, f"df_flare_data_{year}_{month}.csv"),
+                        index=False
+                    )
+
+                if list_df_AR:
+                    pd.concat(list_df_AR).to_csv(
+                        os.path.join(month_dir, f"df_AR_{year}_{month}.csv"),
+                        index=False
+                    )
+
+        # =====================================================================
+        # RECONSTRUCCIÓN ANUAL (SIEMPRE)
+        # =====================================================================
         rebuild_annual_files(year_dir, year)
 
-        # --- Resumen anual basado en archivos ya generados ---
+        # =====================================================================
+        # CREAR O REESCRIBIR RESUMEN ANUAL
+        # =====================================================================
         resumen_file = os.path.join(year_dir, f"resumen_{year}.txt")
 
+        if os.path.exists(resumen_file):
+            print(f"⚠️ El archivo {resumen_file} ya existía y será reescrito.")
+        else:
+            print(f"📄 Creando nuevo archivo de resumen: {resumen_file}")
+
+        # Contar días totales del año
         df_days = all_dates_dataframe(f"{year}-01-01", f"{year}-12-31")
         total_dias = len(df_days)
 
-        # sets para contabilizar
+        # Recalcular días con datos desde archivos mensuales
         dias_con_datos_set = set()
         total_flares = 0
         total_AR = 0
 
-        # recorrer meses
         for month in sorted(os.listdir(year_dir)):
             month_path = os.path.join(year_dir, month)
             if not os.path.isdir(month_path) or not month.isdigit():
                 continue
 
-            # FULL mensual
-            monthly_full = os.path.join(month_path, f"df_full_{year}_{month}.csv")
-            if os.path.exists(monthly_full):
-                df_month_full = pd.read_csv(monthly_full, index_col=0)
-
-                # si existe columna Date
-                if "Date" in df_month_full.columns:
-                    dias_con_datos_set |= set(df_month_full["Date"].astype(str).unique())
-                else:
-                    # si no, reconstruir desde el índice
-                    dias_index = pd.to_datetime(df_month_full.index).strftime("%Y-%m-%d")
-                    dias_con_datos_set |= set(dias_index)
+            # Días con datos GOES
+            monthly_full_file = os.path.join(month_path, f"df_full_{year}_{month}.csv")
+            if os.path.exists(monthly_full_file):
+                df_m = pd.read_csv(monthly_full_file, index_col=0)
+                dias_index = pd.to_datetime(df_m.index, errors="coerce").strftime("%Y-%m-%d")
+                dias_con_datos_set.update(dias_index)
 
             # flares
-            f_fl = os.path.join(month_path, f"df_flare_data_{year}_{month}.csv")
-            if os.path.exists(f_fl):
-                total_flares += len(pd.read_csv(f_fl))
+            file_fl = os.path.join(month_path, f"df_flare_data_{year}_{month}.csv")
+            if os.path.exists(file_fl):
+                total_flares += len(pd.read_csv(file_fl))
 
             # AR
-            f_ar = os.path.join(month_path, f"df_AR_{year}_{month}.csv")
-            if os.path.exists(f_ar):
-                total_AR += len(pd.read_csv(f_ar))
+            file_AR = os.path.join(month_path, f"df_AR_{year}_{month}.csv")
+            if os.path.exists(file_AR):
+                total_AR += len(pd.read_csv(file_AR))
 
-        # días sin datos
-        dias_todos = set(df_days["start_time"].dt.strftime("%Y-%m-%d"))
-        dias_sin_datos_final = sorted(dias_todos - dias_con_datos_set)
+        # Días sin datos
+        all_days_set = set(df_days["start_time"].dt.strftime("%Y-%m-%d"))
+        dias_sin_datos_final = sorted(all_days_set - dias_con_datos_set)
 
+        # --- Guardar archivo resumen ---
         with open(resumen_file, "w") as f:
             f.write(f"Resumen anual GOES {year}\n")
             f.write("=================================\n")
@@ -362,14 +368,13 @@ def process_goes_by_year(start_year, end_year, base_output_dir="GOES_data"):
                 for d in dias_sin_datos_final:
                     f.write(f"{d}\n")
 
-        print(f"📄 Resumen anual guardado en {resumen_file}")
+        print(f"✅ Resumen anual guardado en {resumen_file}")
 
 
 
 # --------------------------------------------------------
 # Ejecución directa
 # --------------------------------------------------------
-
 if __name__ == "__main__":
     base_output_dir = "GOES_data"
     os.makedirs(base_output_dir, exist_ok=True)
