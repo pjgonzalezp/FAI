@@ -1,0 +1,135 @@
+Usando columna de tiempo FAI: date
+Procesando 2701 alertas FAI...
+
+--- Estadísticas de Asociación FAI-Flare ---
+Total FAIs: 2701
+FAIs asociados: 1715 (63.5%)
+FAIs NO asociados (falsos positivos): 986 (36.5%)
+Ventana: 30 minutos hacia adelante
+Incluir FAIs dentro de flares activos: True
+
+Distribución por tipo de asociación:
+Association_Type
+PeakTime     1156
+StartTime     517
+Inside         42
+Name: count, dtype: int64
+Tiempo medio a flare: 9.9 min
+Tiempo mínimo: 0.0 min
+Tiempo máximo: 126.0 min
+
+Distribución por clase:
+  C7.2: 50
+  C5.7: 47
+  M1.0: 46
+  C8.8: 39
+  C2.2: 37
+  C4.3: 34
+  C2.6: 33
+  C5.9: 33
+  C3.2: 30
+  C4.6: 30
+  M2.2: 29
+  C2.9: 29
+  C4.9: 29
+  C1.7: 28
+  C4.2: 28
+  C3.8: 27
+  C9.6: 27
+  C2.4: 26
+  C3.3: 26
+  M1.1: 25
+  M1.3: 25
+  C1.8: 24
+  C4.5: 24
+  C1.9: 24
+  C6.9: 24
+  C2.7: 22
+  C3.4: 22
+  C6.8: 22
+  C7.6: 21
+  C3.5: 21
+  M2.4: 20
+  C9.8: 20
+  C7.4: 19
+  C9.5: 19
+  C5.0: 19
+  M1.5: 19
+  C5.3: 19
+  X1.8: 19
+  C1.2: 18
+  C3.9: 18
+  C4.7: 18
+  C2.3: 18
+  C5.6: 18
+  C8.1: 17
+  C4.4: 17
+  C1.6: 16
+  C3.0: 15
+  M1.4: 15
+  M2.8: 15
+  M3.5: 15
+  C5.2: 14
+  C2.0: 14
+  M9.4: 13
+  C2.1: 13
+  C6.5: 13
+  M1.2: 13
+  M5.4: 13
+  C2.5: 12
+  C4.1: 12
+  C3.6: 12
+  M2.1: 12
+  M2.9: 12
+  C3.7: 12
+  C7.8: 12
+  C6.3: 11
+  C1.3: 11
+  C3.1: 11
+  C7.3: 10
+  C1.5: 10
+  C9.2: 10
+  C7.5: 10
+  C8.2: 10
+  C6.4: 9
+  C2.8: 9
+  C1.4: 9
+  C7.1: 9
+  C6.7: 9
+  C9.7: 9
+  C6.1: 9
+  M1.7: 8
+  C4.0: 8
+  M4.5: 8
+  M1.6: 8
+  M5.1: 8
+  C7.7: 8
+  C5.8: 8
+  X1.1: 7
+  M4.1: 7
+  C4.8: 7
+  C5.1: 6
+  M4.4: 6
+  M3.2: 6
+  C8.4: 6
+  C8.0: 6
+  X1.6: 6
+  C9.3: 5
+  C7.9: 5
+  C9.0: 5
+  C8.7: 4
+  B9.6: 4
+  B5.3: 4
+  C6.2: 3
+  B8.9: 2
+  M1.9: 2
+  C1.1: 2
+  C6.6: 2
+  B6.1: 1
+  C1.0: 1
+  B7.6: 1
+  B3.9: 1
+  M2.7: 1
+
+✅ DataFrame guardado en:
+Analysis_FAI/Analysis_FAI_T9-25_EM0d006_dur3min/df_fai_assoc_filtered_(W_30)_T9-25_EM0d006_dur3min.csv

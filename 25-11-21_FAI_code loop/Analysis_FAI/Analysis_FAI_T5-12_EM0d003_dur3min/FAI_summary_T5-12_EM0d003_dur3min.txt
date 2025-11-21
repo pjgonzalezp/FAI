@@ -1,0 +1,12 @@
+FAI Calculation Summary
+--------------------
+Total points in df_full: 15657
+FAI_alert points: 11050
+FAI_true points: 6535
+FAI_filtered points: 5567
+
+Saved CSVs:
+Analysis_FAI/Analysis_FAI_T5-12_EM0d003_dur3min/df_fai_full_T5-12_EM0d003_dur3min.csv
+Analysis_FAI/Analysis_FAI_T5-12_EM0d003_dur3min/df_fai_all_T5-12_EM0d003_dur3min.csv
+Analysis_FAI/Analysis_FAI_T5-12_EM0d003_dur3min/df_fai_true_T5-12_EM0d003_dur3min.csv
+Analysis_FAI/Analysis_FAI_T5-12_EM0d003_dur3min/df_fai_filtered_T5-12_EM0d003_dur3min.csv

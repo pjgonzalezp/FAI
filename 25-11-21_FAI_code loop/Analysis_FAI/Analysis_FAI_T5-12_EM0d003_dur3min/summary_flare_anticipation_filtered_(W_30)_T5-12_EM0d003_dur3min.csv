@@ -1,0 +1,23 @@
+📊 RESUMEN DE ANÁLISIS FAI–FLARE
+======================================================================
+
+Total flares analizados: 603
+Total FAIs analizados: 5567
+FAIs en ventanas: 2788 (50.1%)
+Promedio de FAIs por flare: 4.62
+
+Flares con ≥1 FAI: 410 (68.0%)
+Flares SIN FAI (falsos negativos): 193 (32.0%)
+Flares con FAI antes del inicio: 213 (35.3%)
+Flares SIN FAI antes del inicio: 390 (64.7%)Flares con FAI antes del pico: 410 (68.0%)
+Flares SIN FAI antes del pico: 193 (32.0%)
+Distribución de FAIs por ventana:
+  • Antes del inicio (WStart): 804 (14.4%)
+  • Antes del pico (WPeak): 2788 (50.1%)
+  • Entre inicio(inclusive) y pico: 1984 (35.6%)
+  • Entre pico(inclusive) y fin(inclusive): 0 (0.0%)
+  • Entre inicio(inclusive) y fin(inclusive): 1984 (35.6%)
+
+Anticipación media (min): 17.7
+Anticipación mínima (min): 1.0
+Anticipación máxima (min): 128.0

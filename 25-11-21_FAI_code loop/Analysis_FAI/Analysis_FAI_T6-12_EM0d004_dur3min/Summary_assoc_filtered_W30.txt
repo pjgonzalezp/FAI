@@ -1,0 +1,142 @@
+Usando columna de tiempo FAI: date
+Procesando 4449 alertas FAI...
+
+--- Estadísticas de Asociación FAI-Flare ---
+Total FAIs: 4449
+FAIs asociados: 2316 (52.1%)
+FAIs NO asociados (falsos positivos): 2133 (47.9%)
+Ventana: 30 minutos hacia adelante
+Incluir FAIs dentro de flares activos: True
+
+Distribución por tipo de asociación:
+Association_Type
+PeakTime     1299
+StartTime     881
+Inside        136
+Name: count, dtype: int64
+Tiempo medio a flare: 13.3 min
+Tiempo mínimo: 0.0 min
+Tiempo máximo: 127.0 min
+
+Distribución por clase:
+  C2.6: 132
+  C5.7: 108
+  C2.2: 95
+  C1.7: 91
+  C1.9: 73
+  C1.6: 66
+  C1.8: 65
+  C1.2: 58
+  C1.4: 55
+  C3.3: 46
+  C3.2: 46
+  C2.1: 45
+  C2.9: 44
+  C2.3: 44
+  C4.6: 41
+  C1.5: 41
+  C3.8: 40
+  C2.7: 39
+  C5.6: 38
+  C2.0: 38
+  C2.5: 38
+  M1.0: 36
+  C9.6: 36
+  C3.1: 35
+  C1.3: 32
+  C4.3: 30
+  C4.4: 30
+  M1.3: 30
+  C6.8: 30
+  C2.4: 29
+  C4.9: 28
+  C1.1: 28
+  C3.0: 27
+  C9.8: 24
+  C3.4: 23
+  C5.9: 23
+  C3.5: 23
+  C8.8: 22
+  C5.3: 21
+  C1.0: 20
+  C4.2: 20
+  C3.9: 20
+  C2.8: 20
+  C7.6: 19
+  C4.1: 18
+  C7.2: 17
+  C6.1: 17
+  C9.5: 16
+  C8.1: 16
+  C3.7: 15
+  C4.5: 14
+  C5.0: 14
+  C4.8: 13
+  C8.2: 12
+  C8.4: 12
+  C6.4: 11
+  M2.2: 11
+  C9.2: 10
+  C5.8: 10
+  C5.2: 10
+  C3.6: 10
+  C4.7: 10
+  C8.7: 10
+  C5.1: 9
+  M1.1: 9
+  C4.0: 9
+  M1.5: 9
+  C6.5: 8
+  M1.7: 8
+  C6.9: 8
+  C7.3: 7
+  C7.7: 7
+  C9.7: 7
+  C7.1: 7
+  B5.3: 7
+  B8.9: 6
+  C7.4: 6
+  M4.4: 6
+  M1.2: 6
+  C8.0: 5
+  C7.8: 5
+  M2.1: 5
+  B5.5: 5
+  M5.4: 5
+  C6.2: 5
+  B9.6: 4
+  C7.5: 4
+  C7.9: 4
+  C6.3: 4
+  M1.4: 4
+  B5.4: 3
+  B7.1: 3
+  B5.6: 3
+  M2.4: 3
+  M9.4: 3
+  B4.6: 3
+  B6.3: 3
+  B7.3: 3
+  B2.5: 2
+  B7.6: 2
+  B8.1: 2
+  B6.1: 2
+  B3.9: 2
+  B8.5: 2
+  C6.7: 2
+  B2.4: 2
+  B7.7: 1
+  B4.9: 1
+  B4.5: 1
+  B6.6: 1
+  B6.0: 1
+  B8.2: 1
+  B5.1: 1
+  C6.6: 1
+  M1.9: 1
+  B9.5: 1
+  M2.8: 1
+  X1.8: 1
+
+✅ DataFrame guardado en:
+Analysis_FAI/Analysis_FAI_T6-12_EM0d004_dur3min/df_fai_assoc_filtered_(W_30)_T6-12_EM0d004_dur3min.csv
