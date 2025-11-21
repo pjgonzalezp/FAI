@@ -1,0 +1,9 @@
+Limpieza de flares - resumen por pasos
+========================================
+Original                            : 604
+Duración según clase                : 603
+Orden Start ≤ Peak ≤ End            : 603
+StartPeak & PeakEnd ≤ 720           : 603
+Creación Flare_ID                   : 603
+========================================
+Total flares finales: 603

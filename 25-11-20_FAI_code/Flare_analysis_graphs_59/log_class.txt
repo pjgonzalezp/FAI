@@ -1,0 +1,6 @@
+Limpieza de flares - resumen por pasos
+========================================
+Original                            : 604
+Clase válida (regex)                : 604
+========================================
+Total flares finales: 604
